@@ -1,0 +1,152 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "Pokémon Weather API",
+    "description": "API para consultar información de Pokémon según el clima y gestionar autenticación de usuarios con JWT."
+  },
+  "host": "localhost:5001",
+  "schemes": ["http"],
+  "paths": {
+    "/api/auth/register": {
+      "post": {
+        "summary": "Registrar un usuario",
+        "description": "Registra un usuario con un username único y contraseña encriptada.",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "username": { "type": "string", "example": "ash" },
+                "password": { "type": "string", "example": "pikachu123" }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "201": { "description": "Usuario registrado exitosamente." },
+          "400": { "description": "El usuario ya existe." }
+        }
+      }
+    },
+    "/api/auth/login": {
+      "post": {
+        "summary": "Autenticar usuario",
+        "description": "Autentica un usuario y genera un token JWT válido.",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "username": { "type": "string", "example": "ash" },
+                "password": { "type": "string", "example": "pikachu123" }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": { "description": "JWT generado exitosamente." },
+          "401": { "description": "Credenciales incorrectas." }
+        }
+      }
+    },
+    "/api/pokemon/type/{name}": {
+      "get": {
+        "summary": "Obtener el tipo de un Pokémon",
+        "description": "Devuelve los tipos de un Pokémon según su nombre. Requiere autenticación JWT.",
+        "security": [{ "BearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "example": "pikachu"
+          }
+        ],
+        "responses": {
+          "200": { "description": "Información del Pokémon obtenida exitosamente." },
+          "404": { "description": "Pokémon no encontrado." },
+          "401": { "description": "Token inválido o no proporcionado." }
+        }
+      }
+    },
+    "/api/pokemon/random/{type_name}": {
+      "get": {
+        "summary": "Obtener un Pokémon aleatorio de un tipo específico",
+        "description": "Devuelve un Pokémon aleatorio dentro de un tipo especificado. Requiere autenticación JWT.",
+        "security": [{ "BearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "type_name",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "example": "fire"
+          }
+        ],
+        "responses": {
+          "200": { "description": "Pokémon aleatorio obtenido exitosamente." },
+          "404": { "description": "No se encontró un Pokémon de este tipo." },
+          "401": { "description": "Token inválido o no proporcionado." }
+        }
+      }
+    },
+    "/api/pokemon/longest/{type_name}": {
+      "get": {
+        "summary": "Obtener el Pokémon con el nombre más largo de un tipo específico",
+        "description": "Devuelve el Pokémon con el nombre más largo dentro de un tipo especificado. Requiere autenticación JWT.",
+        "security": [{ "BearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "type_name",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "example": "water"
+          }
+        ],
+        "responses": {
+          "200": { "description": "Pokémon con el nombre más largo obtenido exitosamente." },
+          "404": { "description": "No se encontró un Pokémon de este tipo." },
+          "401": { "description": "Token inválido o no proporcionado." }
+        }
+      }
+    },
+    "/api/pokemon/weather/{city}": {
+      "get": {
+        "summary": "Obtener Pokémon según el clima",
+        "description": "Devuelve un Pokémon basado en el clima de la ciudad ingresada. Requiere autenticación JWT.",
+        "security": [{ "BearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "city",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "example": "Buenos Aires"
+          }
+        ],
+        "responses": {
+          "200": { "description": "Pokémon basado en el clima obtenido exitosamente." },
+          "400": { "description": "No se pudo determinar el clima." },
+          "401": { "description": "Token inválido o no proporcionado." }
+        }
+      }
+    }
+  },
+  "securityDefinitions": {
+    "BearerAuth": {
+      "type": "apiKey",
+      "name": "Authorization",
+      "in": "header",
+      "description": "Ingrese el token JWT en el formato 'Bearer <token>'"
+    }
+  }
+}
